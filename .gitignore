@@ -1,5 +1,5 @@
-src/*.js
-src/*.css
-src/*.map
+src/**/*.js
+src/**/*.css
+src/**/*.map
 
 node_modules/
