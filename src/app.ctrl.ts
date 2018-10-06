@@ -1,20 +1,28 @@
 import * as angular from "angular";
 
-import {WebSocketFactory} from "./web-socket/web-socket.service";
+import { IController } from "angular";
+import { WebSocketFactory } from "./web-socket/web-socket.service";
 
-export default class AppController {
-    stocks: Array<string>;
-    quotes: { [symbol: string]: IexStock } = {};
+export default class AppController implements IController {
+    stocks = ["SNAP", "FB", "AIG+"];
+    quotes = {} as { [symbol: string]: IexStock };
+
+    private socket: SocketIOClient.Socket;
 
     static $inject = ["prxWebSocket"];
-    constructor(prxWebSocket: WebSocketFactory) {
-        this.stocks = ["SNAP", "FB", "AIG+"];
+    constructor(private prxWebSocket: WebSocketFactory) {}
 
-        prxWebSocket.openSocket('https://ws-api.iextrading.com/1.0/tops', {
+    $onInit() {
+        this.prxWebSocket.openSocket('https://ws-api.iextrading.com/1.0/tops', {
             message: (message: string) => this.handleMessage(angular.fromJson(message) as IexStock),
         }).then(socket => {
+            this.socket = socket;
             socket.emit('subscribe', this.stocks.join(','));
         });
+    }
+
+    $onDestroy() {
+        this.socket.close();
     }
 
     private handleMessage(message: IexStock) {
