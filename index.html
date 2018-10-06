@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="assets/app.css" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.10/angular.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
 
     <script src="assets/app.js"></script>
     <script src="assets/templates.js"></script>
@@ -18,9 +17,7 @@
         <h1>Stock Ticker Demo</h1>
     </header>
 
-    <main data-ng-controller="AppController as appCtrl">
-        <prx-stock-ticker data-ng-repeat="symbol in ::appCtrl.stocks" stock="appCtrl.quotes[symbol]"></prx-stock-ticker>
-    </main>
+    <main data-ng-include="::'app.html'"></main>
 
 </body>
 </html>
