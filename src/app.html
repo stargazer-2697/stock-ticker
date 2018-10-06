@@ -1,0 +1,19 @@
+﻿<section data-ng-controller="AppController as appCtrl">
+    <div class="stock" data-ng-repeat="symbol in appCtrl.stocks">
+        <prx-stock-ticker symbol="::symbol.slice(0, 3)"
+                          price="appCtrl.quotes[symbol].lastPrice"
+                          delta="appCtrl.quotes[symbol].dailyChange"
+                          perc="appCtrl.quotes[symbol].dailyChangePerc"
+                          time="appCtrl.quotes[symbol].time"
+                          volume="appCtrl.quotes[symbol].volume"></prx-stock-ticker>
+        <button data-ng-click="appCtrl.remove(symbol);">&cross;</button>
+    </div>
+    <div class="stock empty" data-ng-switch="appCtrl.selectNew">
+        <a class="select-new" href="" data-ng-switch-default data-ng-click="appCtrl.selectNew = true;">&#65291;</a>
+        <ul data-ng-switch-when="true">
+            <li data-ng-repeat="symbol in ::appCtrl.available">
+                <a href="" data-ng-click="appCtrl.add(symbol)">{{::symbol}}</a>
+            </li>
+        </ul>
+    </div>
+</section>

@@ -1,1 +1,67 @@
-﻿@import "stock-ticker/_stock-ticker-component";
+﻿@import "mixins";
+@import "stock-ticker/stock-ticker-component";
+
+.stock {
+    $de-em: #aaa;
+
+    float: left;
+    margin: 1.6rem;
+    position: relative;
+
+    &.empty {
+        width: 15.6rem;
+        height: 15.6rem;
+        border: 2px dashed $de-em;
+        text-align: center;
+
+        .select-new {
+            display: block;
+            color: $de-em;
+            text-decoration: none;
+            font-size: 6.4rem;
+            line-height: 15.6rem;
+        }
+
+        &:hover {
+            border-color: white;
+            
+            .select-new {
+                color: white;
+            }
+        }
+
+        ul {
+            @include dark-scrollbar;
+            margin: 0.5rem;
+            padding: 0;
+            height: calc(100% - 1.0rem);
+            font-size: 1.4rem;
+            list-style: none;
+            overflow: auto;
+
+            a {
+                text-decoration: none;
+                color: $de-em;
+
+                &:hover {
+                    color: white;
+                }
+            }
+        }
+    }
+
+    > button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 2.0rem;
+        border: none;
+        background: none;
+        color: $de-em;
+        cursor: pointer;
+
+        &:hover {
+            color: white;
+        }
+    }
+}

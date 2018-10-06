@@ -1,10 +1,10 @@
 ﻿<div class="stock-ticker">
-    <h2>{{::$ctrl.stock.symbol}}</h2>
-    <h4>{{$ctrl.stock.lastSalePrice | currency}}</h4>
-    <div>{{$ctrl.stockDelta}}</div>
-    <div>{{$ctrl.stockPerc}}</div>
-
-    <div><strong>Last Trade</strong></div>
-    <div>{{$ctrl.stock.lastSaleTime | date:'mediumTime'}}</div>
-    <h5>{{$ctrl.stock.volume}}</h5>
+    <h2 data-ng-class="{up: $ctrl.delta > 0, down: $ctrl.delta < 0}">{{$ctrl.symbol}}</h2>
+    <h4 data-ng-class="[$ctrl.tick, {flash: $ctrl.flash}]">{{$ctrl.price | currency}}</h4>
+    <div class="time">{{$ctrl.time | date:'mediumTime'}}</div>
+    <div>
+        {{$ctrl.delta}}<br>
+        ({{$ctrl.deltaPerc * 100 | number:2}}%)
+    </div>
+    <h5>Vol: {{$ctrl.volume | number:0}}</h5>
 </div>

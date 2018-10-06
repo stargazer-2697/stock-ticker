@@ -1,0 +1,34 @@
+﻿@mixin dark-scrollbar {
+    $scroll-dark: #ccc;
+    $scroll-light: transparent;
+
+    scrollbar-face-color: $scroll-dark;
+    scrollbar-3dlight-color: $scroll-light;
+    scrollbar-highlight-color: $scroll-light;
+    scrollbar-shadow-color: $scroll-light;
+    scrollbar-darkshadow-color: $scroll-light;
+    scrollbar-track-color: $scroll-light;
+    scrollbar-arrow-color: $scroll-light;
+
+    &::-webkit-scrollbar {
+        background: $scroll-light;
+        width: .8rem;
+        height: .8rem;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: .5rem;
+        background-image: -webkit-linear-gradient( 90deg, rgb(123,125,129) 0%, rgb(208,211,216) 100%);
+        box-shadow: .05rem .08rem .1rem .0rem rgba(0, 0, 0, 0.71),inset .05rem .08rem .0rem .0rem rgba(255, 255, 255, 0.45);
+    }
+
+    &::-webkit-scrollbar-track {
+        border-radius: .4rem;
+        background-image: -webkit-linear-gradient( 90deg, rgb(53,55,59) 0%, rgb(48,50,53) 100%);
+        box-shadow: inset .05rem .08rem .3rem .0rem rgba(0, 0, 0, 0.36);
+    }
+
+    &::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+}

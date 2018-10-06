@@ -1,27 +1,71 @@
-﻿.stock-ticker {
+﻿@import "_vars";
+
+.stock-ticker {
     width: 16.0rem;
     height: 16.0rem;
-    float: left;
     background: #545454;
     color: #fff;
-    margin: 1.6rem;
+    font-size: 1.0rem;
     text-align: center;
     box-shadow: .2rem .2rem 1.3rem rgba(#000, 0.8);
 
     h2 {
         font-size: 2.6rem;
         font-weight: 300;
-        margin: 1.6rem 0;
+        padding: 1.2rem 0 0.8rem;
+        margin: 0;
     }
 
     h4 {
         font-size: 1.8rem;
-        margin: 1.6rem 0;
+        margin: 0;
+
+        &::after {
+            content: '';
+            position: absolute;
+            margin-left: 0.4rem;
+        }
+
+        &.up::after {
+            content: '▲';
+        }
+
+        &.down::after {
+            content: '▼';
+        }
+
+        &.flash::after {
+            animation: flash 1s ease forwards;
+        }
+    }
+
+    @keyframes flash {
+        0% { opacity: 0; }
+        50% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+    h2, h4 {
+        transition: color 250ms linear;
+
+        &.up {
+            color: $green;
+        }
+
+        &.down {
+            color: $red;
+        }
+    }
+
+    .time {
+        height: 1.2em;
+        margin-bottom: 1.0rem;
+        color: #aaa;
     }
 
     h5 {
-        font-size: 1.6rem;
-        margin: 1.0rem 0;
+        font-size: 1.4rem;
+        margin: 1.2rem 0;
         font-weight: 300;
     }
 }
