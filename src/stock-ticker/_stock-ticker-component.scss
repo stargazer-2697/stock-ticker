@@ -1,24 +1,27 @@
 ﻿.stock-ticker {
-    width: 32.0rem;
-    height: 54.0rem;
-
-    h1 {
-        font-size: 3.2rem;
-    }
+    width: 16.0rem;
+    height: 16.0rem;
+    float: left;
+    background: #545454;
+    color: #fff;
+    margin: 1.6rem;
+    text-align: center;
+    box-shadow: .2rem .2rem 1.3rem rgba(#000, 0.8);
 
     h2 {
         font-size: 2.6rem;
-    }
-
-    h3 {
-        font-size: 2.4rem;
+        font-weight: 300;
+        margin: 1.6rem 0;
     }
 
     h4 {
         font-size: 1.8rem;
+        margin: 1.6rem 0;
     }
 
     h5 {
         font-size: 1.6rem;
+        margin: 1.0rem 0;
+        font-weight: 300;
     }
 }

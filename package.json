@@ -17,7 +17,8 @@
     ]
   },
   "browserify-shim": {
-    "angular": "global:angular"
+    "angular": "global:angular",
+    "socket.io-client": "global:io"
   },
   "repository": {
     "type": "git",
@@ -31,10 +32,12 @@
   "homepage": "https://github.com/process-execution/stock-ticker#readme",
   "dependencies": {},
   "peerDependencies": {
-    "angular": "^1.6.10"
+    "angular": "^1.6.10",
+    "socket.io-client": "^1.4.32"
   },
   "devDependencies": {
     "@types/angular": "^1.6.10",
+    "@types/socket.io-client": "^1.4.32",
     "browserify": "^16.2.3",
     "browserify-shim": "^3.8.14",
     "concurrently": "^4.0.1",

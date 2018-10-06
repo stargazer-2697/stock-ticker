@@ -1,7 +1,10 @@
 ﻿import * as ng from "angular";
 
 class StockTickerComponent implements ng.IComponentOptions {
-    template = "stock-ticker.html";
+    templateUrl = "stock-ticker.component.html";
+    bindings = {
+        stock: '<'
+    }
 }
 
 export default new StockTickerComponent();

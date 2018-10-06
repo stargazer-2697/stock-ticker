@@ -1,12 +1,10 @@
 ﻿<div class="stock-ticker">
-    <h2 id="stock-name-ZNGA">{{::$ctrl.stockName}}</h2>
-    <h4 id="stock-price-ZNGA">{{::$ctrl.stockPrice}}</h4>
-    <div id="stock-delta-ZNGA">{{::$ctrl.stockDelta}}</div>
-    <div id="stock-perc-ZNGA">{{::$ctrl.stockPerc}}</div>
+    <h2>{{::$ctrl.stock.symbol}}</h2>
+    <h4>{{$ctrl.stock.lastSalePrice | currency}}</h4>
+    <div>{{$ctrl.stockDelta}}</div>
+    <div>{{$ctrl.stockPerc}}</div>
 
-    <div>&nbsp;</div>
-
-    <div id="stock-price-lt"><strong>Last Trade</strong></div>
-    <div id="stock-time-ZNGA">{{::$ctrl.lastTrade}}</div>
-    <h5 id="stock-vol-ZNGA">{{::$ctrl.stockVol}}</h5>
+    <div><strong>Last Trade</strong></div>
+    <div>{{$ctrl.stock.lastSaleTime | date:'mediumTime'}}</div>
+    <h5>{{$ctrl.stock.volume}}</h5>
 </div>
