@@ -8,10 +8,10 @@
     font-size: 1.0rem;
     text-align: center;
     box-shadow: .2rem .2rem 1.3rem rgba(#000, 0.8);
+    text-shadow: .1rem .1rem 0 rgba(#000, 0.4), 0 0 .4rem rgba(#000, 0.22);
 
     h2 {
         font-size: 2.6rem;
-        font-weight: 300;
         padding: 1.2rem 0 0.8rem;
         margin: 0;
     }
@@ -34,18 +34,21 @@
             content: '▼';
         }
 
-        &.flash::after {
-            animation: flash 1s ease forwards;
+        &.up, &.down {
+            &::after {
+                animation: flash 1s ease forwards;
+            }
+        }
+
+        @keyframes flash {
+            0% { opacity: 0; }
+            25% { opacity: 1; }
+            100% { opacity: 0; }
         }
     }
 
-    @keyframes flash {
-        0% { opacity: 0; }
-        50% { opacity: 1; }
-        100% { opacity: 0; }
-    }
-
     h2, h4 {
+        font-weight: 300;
         transition: color 250ms linear;
 
         &.up {

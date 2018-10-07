@@ -22,21 +22,29 @@ class StockTickerComponentController implements IComponentController {
     time: number;
     volume: number;
     tick: string;
-    flash: boolean;
 
-    static $inject = ["$timeout"];
-    constructor(private $timeout: ITimeoutService) { }
+    static $inject = ["$scope"];
+    constructor(private $scope: IScope) { }
 
     $onChanges(changes: IOnChangesObject) {
         if (changes.price && changes.price.previousValue != null && !changes.price.isFirstChange()) {
-            this.tick = changes.price.currentValue > changes.price.previousValue ? "up" : "down";
-            this.flash = false;
-            this.$timeout(() => this.flash = true);
+            let tick = changes.price.currentValue > changes.price.previousValue ? "up" : "down";
+            // We need to clear the tick class before updating it so that the flash animation fires each time
+            requestAnimationFrame(() => {
+                this.setTick(null);
+                requestAnimationFrame(() => this.setTick(tick));
+            });
             
             if (!changes.time) {
                 this.time = Date.now();
             }
         }
+    }
+
+    // Optimised for updating the tick class from outside the digest loop
+    private setTick(tick: string) {
+        this.tick = tick;
+        this.$scope.$digest();
     }
 }
 
