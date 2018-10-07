@@ -6,15 +6,22 @@ module.exports = require("./src/app.module");
 (function (global){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/// <reference path="../node_modules/@types/angular-cookies/index.d.ts" />
 const angular = (typeof window !== "undefined" ? window['angular'] : typeof global !== "undefined" ? global['angular'] : null);
 const symbols_1 = require("./symbols");
+const COOKIE_NAME = "prxAppController.symbols";
+const DEFAULT_SYMBOLS = ['BTC', 'ETH', 'LTC', 'XRP', 'BCH', 'DSH', 'NEO', 'MGO', 'ELF', 'ZEC'];
 class AppController {
-    constructor(prxWebSocket, $scope) {
+    constructor(prxWebSocket, $cookies, $scope, $timeout) {
         this.prxWebSocket = prxWebSocket;
+        this.$cookies = $cookies;
         this.$scope = $scope;
+        this.$timeout = $timeout;
         this.available = symbols_1.default.slice();
-        this.stocks = [];
+        this.symbols = [];
         this.quotes = {};
+        this.init = true;
+        this.loading = false;
         this.selectNew = false;
         this.channels = {};
     }
@@ -27,7 +34,14 @@ class AppController {
             }
             else {
                 this.socket = socket;
-                ['BTC', 'ETH', 'LTC', 'DSH', 'XRP'].forEach(symbol => this.add(symbol));
+                let initSymbols = this.$cookies.getObject(COOKIE_NAME) || DEFAULT_SYMBOLS;
+                initSymbols.forEach(symbol => this.add(symbol));
+                let cancelWatch = this.$scope.$watch(() => this.symbols.length, (length) => {
+                    if (length >= initSymbols.length) {
+                        this.init = false;
+                        cancelWatch();
+                    }
+                });
             }
         });
     }
@@ -45,20 +59,25 @@ class AppController {
                 channel: 'ticker',
                 symbol: 't' + symbol + 'USD'
             }));
+            this.$scope.$applyAsync(() => this.loading = true);
         }
     }
     remove(symbol) {
-        let index = this.stocks.indexOf(symbol);
+        let index = this.symbols.indexOf(symbol);
         if (index >= 0) {
             this.selectNew = false;
             let shortName = symbol.slice(0, 3);
             this.available.splice(this.findSymbolIndex(shortName), 0, shortName);
-            this.stocks.splice(index, 1);
+            this.symbols.splice(index, 1);
+            this.storeSymbols();
             this.socket.send(angular.toJson({
                 event: "unsubscribe",
                 chanId: this.channels[symbol]
             }));
         }
+    }
+    storeSymbols() {
+        this.$cookies.putObject(COOKIE_NAME, this.symbols);
     }
     findSymbolIndex(symbol) {
         for (let i = 0; i < this.available.length; ++i) {
@@ -80,9 +99,13 @@ class AppController {
     handleEvent(message) {
         switch (message.event) {
             case "subscribed":
-                this.stocks.push(message.pair);
                 this.channels[message.pair] = message.chanId;
                 this.channels[message.chanId] = message.pair;
+                this.$timeout(() => {
+                    this.symbols.push(message.pair);
+                    this.storeSymbols();
+                    this.loading = false;
+                }, 400); // Pad a small delay to smoothen the transition
                 break;
             case "unsubscribed":
                 if (message.status === "OK") {
@@ -94,7 +117,7 @@ class AppController {
         }
     }
 }
-AppController.$inject = ["prxWebSocket", "$scope"];
+AppController.$inject = ["prxWebSocket", "$cookies", "$scope", "$timeout"];
 exports.default = AppController;
 class BitFinexQuote {
     constructor(data) {
@@ -143,6 +166,7 @@ const stock_ticker_module_1 = require("./stock-ticker/stock-ticker.module");
 const web_socket_module_1 = require("./web-socket/web-socket.module");
 const app_ctrl_1 = require("./app.ctrl");
 exports.default = angular.module("prx.stockTickerApp", [
+    "ngCookies",
     stock_ticker_module_1.default.name,
     web_socket_module_1.default.name
 ]).controller("AppController", app_ctrl_1.default);
@@ -166,21 +190,29 @@ class StockTickerComponent {
     }
 }
 class StockTickerComponentController {
-    constructor($timeout) {
-        this.$timeout = $timeout;
+    constructor($scope) {
+        this.$scope = $scope;
     }
     $onChanges(changes) {
         if (changes.price && changes.price.previousValue != null && !changes.price.isFirstChange()) {
-            this.tick = changes.price.currentValue > changes.price.previousValue ? "up" : "down";
-            this.flash = false;
-            this.$timeout(() => this.flash = true);
+            let tick = changes.price.currentValue > changes.price.previousValue ? "up" : "down";
+            // We need to clear the tick class before updating it so that the flash animation fires each time
+            requestAnimationFrame(() => {
+                this.setTick(null);
+                requestAnimationFrame(() => this.setTick(tick));
+            });
             if (!changes.time) {
                 this.time = Date.now();
             }
         }
     }
+    // Optimised for updating the tick class from outside the digest loop
+    setTick(tick) {
+        this.tick = tick;
+        this.$scope.$digest();
+    }
 }
-StockTickerComponentController.$inject = ["$timeout"];
+StockTickerComponentController.$inject = ["$scope"];
 exports.default = new StockTickerComponent();
 
 },{}],5:[function(require,module,exports){
@@ -250,15 +282,13 @@ class WebSocketFactory {
         this.$q = $q;
         this.$rootScope = $rootScope;
     }
-    openSocket(url, callbacks, forceNew) {
+    openSocket(url, callbacks) {
         let socket = new WebSocket(url), defer = this.$q.defer();
         socket.addEventListener("open", () => defer.resolve(socket));
         if (callbacks != null) {
-            let $scope = this.$rootScope;
             angular.forEach(callbacks, (callback, eventName) => {
                 socket.addEventListener(eventName, (e) => {
-                    console.log(e.data);
-                    $scope.$apply(() => callback.call(this, e.data));
+                    this.$rootScope.$apply(() => callback.call(this, e.data));
                 });
             });
         }

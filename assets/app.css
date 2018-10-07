@@ -6,10 +6,10 @@
   color: #fff;
   font-size: 1.0rem;
   text-align: center;
-  box-shadow: 0.2rem 0.2rem 1.3rem rgba(0, 0, 0, 0.8); }
+  box-shadow: 0.2rem 0.2rem 1.3rem rgba(0, 0, 0, 0.8);
+  text-shadow: 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.4), 0 0 0.4rem rgba(0, 0, 0, 0.22); }
   .stock-ticker h2 {
     font-size: 2.6rem;
-    font-weight: 300;
     padding: 1.2rem 0 0.8rem;
     margin: 0; }
   .stock-ticker h4 {
@@ -23,17 +23,18 @@
       content: '▲'; }
     .stock-ticker h4.down::after {
       content: '▼'; }
-    .stock-ticker h4.flash::after {
+    .stock-ticker h4.up::after, .stock-ticker h4.down::after {
       animation: flash 1s ease forwards; }
 
 @keyframes flash {
   0% {
     opacity: 0; }
-  50% {
+  25% {
     opacity: 1; }
   100% {
     opacity: 0; } }
   .stock-ticker h2, .stock-ticker h4 {
+    font-weight: 300;
     transition: color 250ms linear; }
     .stock-ticker h2.up, .stock-ticker h4.up {
       color: #2ecc71; }
@@ -52,20 +53,46 @@
   float: left;
   margin: 1.6rem;
   position: relative; }
+  .init .stock {
+    display: none; }
   .stock.empty {
+    position: relative;
     width: 15.6rem;
     height: 15.6rem;
     border: 2px dashed #aaa;
-    text-align: center; }
+    text-align: center;
+    perspective: 1000px; }
+    .stock.empty .flipper,
+    .stock.empty .select-new,
+    .stock.empty .spinner {
+      width: 100%;
+      height: 100%; }
+    .stock.empty .flipper {
+      position: relative;
+      transition: 0.6s;
+      transform-origin: 100% 50%;
+      transform-style: preserve-3d; }
+    .stock.empty.loading .flipper {
+      transform: rotateX(-180deg); }
+    .stock.empty .select-new,
+    .stock.empty .spinner {
+      backface-visibility: hidden;
+      position: absolute;
+      top: 0;
+      left: 0; }
     .stock.empty .select-new {
       display: block;
       color: #aaa;
       text-decoration: none;
       font-size: 6.4rem;
-      line-height: 15.6rem; }
-    .stock.empty:hover {
+      line-height: 15.6rem;
+      z-index: 2;
+      transform: rotateX(0deg); }
+    .stock.empty .spinner {
+      transform: rotateX(180deg); }
+    .stock.empty:not(.loading):hover {
       border-color: white; }
-      .stock.empty:hover .select-new {
+      .stock.empty:not(.loading):hover .select-new {
         color: white; }
     .stock.empty ul {
       scrollbar-face-color: #ccc;
@@ -96,6 +123,7 @@
       .stock.empty ul::-webkit-scrollbar-corner {
         background: transparent; }
       .stock.empty ul a {
+        display: block;
         text-decoration: none;
         color: #aaa; }
         .stock.empty ul a:hover {
@@ -111,3 +139,25 @@
     cursor: pointer; }
     .stock > button:hover {
       color: white; }
+
+.app-container > .spinner {
+  width: 0;
+  margin: auto; }
+
+.spinner::after {
+  content: '\20DB';
+  display: block;
+  animation: rotate 1.5s linear infinite;
+  color: #aaa;
+  font-size: 10.3rem;
+  height: 9rem;
+  padding: 3.3rem 0; }
+
+.clearfix::after {
+  display: block;
+  content: "";
+  clear: both; }
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg); } }
