@@ -77,7 +77,7 @@ class AppController {
         }
     }
     storeSymbols() {
-        this.$cookies.putObject(COOKIE_NAME, this.symbols);
+        this.$cookies.putObject(COOKIE_NAME, this.symbols.map((symbol) => symbol.slice(0, 3)));
     }
     findSymbolIndex(symbol) {
         for (let i = 0; i < this.available.length; ++i) {
