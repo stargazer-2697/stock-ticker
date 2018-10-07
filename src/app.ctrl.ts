@@ -85,7 +85,7 @@ export default class AppController implements IController {
     }
 
     private storeSymbols() {
-        this.$cookies.putObject(COOKIE_NAME, this.symbols);
+        this.$cookies.putObject(COOKIE_NAME, this.symbols.map((symbol: string) => symbol.slice(0, 3)));
     }
 
     private findSymbolIndex(symbol: string) {
