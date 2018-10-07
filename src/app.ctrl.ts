@@ -1,22 +1,30 @@
+/// <reference path="../node_modules/@types/angular-cookies/index.d.ts" />
 import * as angular from "angular";
 
-import { IController, IScope } from "angular";
+import { IController, IScope, cookies as ngCookies, ITimeoutService } from "angular";
 import { WebSocketFactory } from "./web-socket/web-socket.service";
 import availableSymbols from "./symbols";
 
+const COOKIE_NAME = "prxAppController.symbols";
+const DEFAULT_SYMBOLS = ['BTC', 'ETH', 'LTC', 'XRP', 'BCH', 'DSH', 'NEO', 'MGO', 'ELF', 'ZEC'];
+
 export default class AppController implements IController {
     available = availableSymbols.slice();
-    stocks = [] as string[];
+    symbols = [] as string[];
     quotes = {} as { [symbol: string]: BitFinexQuote };
+    init = true;
+    loading = false;
     selectNew = false;
 
     private socket: WebSocket;
     private channels = {} as {[symbol: string]: number} & {[channelId: number]: string};
 
-    static $inject = ["prxWebSocket", "$scope"];
+    static $inject = ["prxWebSocket", "$cookies", "$scope", "$timeout"];
     constructor(
         private prxWebSocket: WebSocketFactory,
-        private $scope: IScope
+        private $cookies: ngCookies.ICookiesService,
+        private $scope: IScope,
+        private $timeout: ITimeoutService
     ) { }
 
     $onInit() {
@@ -27,7 +35,15 @@ export default class AppController implements IController {
                 socket.close(); // Controller was destroyed before the socket finished connecting, so close it now
             } else {
                 this.socket = socket;
-                ['BTC', 'ETH', 'LTC', 'DSH', 'XRP'].forEach(symbol => this.add(symbol));
+
+                let initSymbols: string[] = this.$cookies.getObject(COOKIE_NAME) || DEFAULT_SYMBOLS;
+                initSymbols.forEach(symbol => this.add(symbol));
+                let cancelWatch = this.$scope.$watch(() => this.symbols.length, (length: number) => {
+                    if (length >= initSymbols.length) {
+                        this.init = false;
+                        cancelWatch();
+                    }
+                });
             }
         });
     }
@@ -47,21 +63,29 @@ export default class AppController implements IController {
                 channel: 'ticker',
                 symbol: 't' + symbol + 'USD'
             }));
+            this.$scope.$applyAsync(() => this.loading = true);
         }
     }
 
     remove(symbol: string) {
-        let index = this.stocks.indexOf(symbol);
+        let index = this.symbols.indexOf(symbol);
         if (index >= 0) {
             this.selectNew = false;
             let shortName = symbol.slice(0, 3);
             this.available.splice(this.findSymbolIndex(shortName), 0, shortName);
-            this.stocks.splice(index, 1);
+
+            this.symbols.splice(index, 1);
+            this.storeSymbols();
+
             this.socket.send(angular.toJson({
                 event: "unsubscribe",
                 chanId: this.channels[symbol]
             }));
         }
+    }
+
+    private storeSymbols() {
+        this.$cookies.putObject(COOKIE_NAME, this.symbols);
     }
 
     private findSymbolIndex(symbol: string) {
@@ -86,9 +110,14 @@ export default class AppController implements IController {
     private handleEvent(message: any) {
         switch (message.event) {
             case "subscribed":
-                this.stocks.push(message.pair);
                 this.channels[message.pair] = message.chanId;
                 this.channels[message.chanId] = message.pair;
+
+                this.$timeout(() => {
+                    this.symbols.push(message.pair);
+                    this.storeSymbols();
+                    this.loading = false;
+                }, 400); // Pad a small delay to smoothen the transition
                 break;
 
             case "unsubscribed":
@@ -100,22 +129,6 @@ export default class AppController implements IController {
                 }
         }
     }
-}
-
-export interface IexStock {
-    "symbol": string,
-    "marketPercent": number,
-    "bidSize": number,
-    "bidPrice": number,
-    "askSize": number,
-    "askPrice": number,
-    "volume": number,
-    "lastSalePrice": number,
-    "lastSaleSize": number,
-    "lastSaleTime": number,
-    "lastUpdated": number,
-    "sector": string,
-    "securityType": string
 }
 
 export class BitFinexQuote {

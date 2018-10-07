@@ -32,10 +32,12 @@
   "homepage": "https://github.com/process-execution/stock-ticker#readme",
   "dependencies": {},
   "peerDependencies": {
-    "angular": "^1.6.10"
+    "angular": "^1.6.10",
+    "angular-cookies": "^1.6.10"
   },
   "devDependencies": {
     "@types/angular": "^1.6.10",
+    "@types/angular-cookies": "^1.4.5",
     "browserify": "^16.2.3",
     "browserify-shim": "^3.8.14",
     "concurrently": "^4.0.1",

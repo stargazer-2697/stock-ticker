@@ -12,17 +12,15 @@ export class WebSocketFactory {
         private $rootScope: IScope
     ) {}
 
-    openSocket(url: string, callbacks?: Callbacks, forceNew?: boolean): IPromise<WebSocket> {
+    openSocket(url: string, callbacks?: Callbacks): IPromise<WebSocket> {
         let socket = new WebSocket(url),
             defer = this.$q.defer() as IDeferred<WebSocket>;
         socket.addEventListener("open", () => defer.resolve(socket));
 
         if (callbacks != null) {
-            let $scope = this.$rootScope;
             angular.forEach(callbacks, (callback: Function, eventName: string) => {
                 socket.addEventListener(eventName, (e: MessageEvent) => {
-                    console.log(e.data);
-                    $scope.$apply(() => callback.call(this, e.data));
+                    this.$rootScope.$apply(() => callback.call(this, e.data));
                 });
             });
         }

@@ -5,6 +5,8 @@ import WebSocketModule from "./web-socket/web-socket.module";
 import AppController from "./app.ctrl";
 
 export default angular.module("prx.stockTickerApp", [
+    "ngCookies",
+
     StockTickerModule.name,
     WebSocketModule.name
 ]).controller("AppController", AppController);
