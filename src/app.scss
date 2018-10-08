@@ -106,18 +106,19 @@
 
 .spinner {
     .app-container > & {
-        width: 0;
+        width: 15.6rem;
         margin: auto;
     }
 
     &::after {
-        content: '\20DB';
+        content: '';
+        background: url(loading.png) 50%;
+        background-size: cover;
         display: block;
+        width: 9.0rem;
+        height: 9.0rem;
+        margin: 3.3rem;
         animation: rotate 1.5s linear infinite;
-        color: $de-em;
-        font-size: 10.3rem;
-        height: 9rem;
-        padding: 3.3rem 0;
     }
 }
 
