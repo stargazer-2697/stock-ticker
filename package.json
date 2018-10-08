@@ -2,7 +2,7 @@
   "name": "stock-ticker",
   "version": "1.0.0",
   "private": true,
-  "description": "Demo app using WebSockets to display real-time cryptocurrent trading info",
+  "description": "Demo app using WebSockets to display real-time cryptocurrency trading info",
   "main": "index.js",
   "scripts": {
     "build": "npm run clean && concurrently --kill-others-on-fail \"npm run build-sass\" \"npm run build-ts && npm run build-js\" \"npm run build-templates\" \"cpx assets/* ../gh-pages/assets\"",
