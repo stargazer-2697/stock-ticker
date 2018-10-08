@@ -1,2 +1,2 @@
 # stock-ticker
-Demo app using WebSockets to display real-time cryptocurrent trading info.
+Demo app using WebSockets to display real-time cryptocurrency trading info.
