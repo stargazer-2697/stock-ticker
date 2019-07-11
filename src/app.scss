@@ -76,6 +76,7 @@
             font-size: 2.4rem;
             list-style: none;
             overflow: auto;
+            -webkit-overflow-scrolling: touch;
 
             a {
                 display: block;
