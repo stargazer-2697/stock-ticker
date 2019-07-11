@@ -76,6 +76,7 @@
       transform: rotateX(-180deg); }
     .stock.empty .select-new,
     .stock.empty .spinner {
+      -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
       position: absolute;
       top: 0;
@@ -105,9 +106,10 @@
       margin: 0.5rem;
       padding: 0;
       height: calc(100% - 1.0rem);
-      font-size: 1.4rem;
+      font-size: 2.4rem;
       list-style: none;
-      overflow: auto; }
+      overflow: auto;
+      -webkit-overflow-scrolling: touch; }
       .stock.empty ul::-webkit-scrollbar {
         background: transparent;
         width: .8rem;
