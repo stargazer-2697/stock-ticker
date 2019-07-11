@@ -39,6 +39,7 @@
 
         .select-new,
         .spinner {
+            -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             position: absolute;
             top: 0;
